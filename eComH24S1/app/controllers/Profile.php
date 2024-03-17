@@ -21,6 +21,7 @@ class Profile extends \app\core\Controller{
 			//populate it
 			$profile->user_id = $_SESSION['user_id'];
 			$profile->first_name = $_POST['first_name'];
+			$profile->middle_name = $_POST['middle_name'];
 			$profile->last_name = $_POST['last_name'];
 			//insert it
 			$profile->insert();
@@ -39,6 +40,7 @@ class Profile extends \app\core\Controller{
 			//make a new profile object
 			//populate it
 			$profile->first_name = $_POST['first_name'];
+			$profile->middle_name = $_POST['middle_name'];
 			$profile->last_name = $_POST['last_name'];
 			//update it
 			$profile->update();
