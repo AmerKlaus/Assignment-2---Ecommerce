@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 17, 2024 at 09:51 PM
+-- Generation Time: Mar 18, 2024 at 12:05 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -78,8 +78,16 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `user_id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
-  `password_hash` varchar(60) NOT NULL
+  `password_hash` varchar(60) NOT NULL,
+  `active` tinyint(4) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`user_id`, `username`, `password_hash`, `active`) VALUES
+(1, 'amer', '$2y$10$ey5/oE/u3dgKH6O9bNlXm.kfT91BBHqhBqM4GZcFlIrEFXOU2wOB.', 0);
 
 --
 -- Indexes for dumped tables
@@ -104,8 +112,8 @@ ALTER TABLE `publication`
 --
 ALTER TABLE `publication_comment`
   ADD PRIMARY KEY (`publication_comment_id`),
-  ADD KEY `publicationId_foreignKey` (`publication_id`),
-  ADD KEY `profileId_foreignKey2` (`profile_id`);
+  ADD KEY `profileId_foreignKey2` (`profile_id`),
+  ADD KEY `publicationId_foreignKey` (`publication_id`);
 
 --
 -- Indexes for table `user`
@@ -140,7 +148,7 @@ ALTER TABLE `publication_comment`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -150,20 +158,20 @@ ALTER TABLE `user`
 -- Constraints for table `profile`
 --
 ALTER TABLE `profile`
-  ADD CONSTRAINT `userId_foreignKey` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `userId_foreignKey` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
 
 --
 -- Constraints for table `publication`
 --
 ALTER TABLE `publication`
-  ADD CONSTRAINT `profileId_foreignKey` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `profileId_foreignKey` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`);
 
 --
 -- Constraints for table `publication_comment`
 --
 ALTER TABLE `publication_comment`
-  ADD CONSTRAINT `profileId_foreignKey2` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `publicationId_foreignKey` FOREIGN KEY (`publication_id`) REFERENCES `publication` (`publication_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `profileId_foreignKey2` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`),
+  ADD CONSTRAINT `publicationId_foreignKey` FOREIGN KEY (`publication_id`) REFERENCES `publication` (`publication_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
