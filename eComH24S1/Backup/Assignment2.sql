@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 18, 2024 at 03:45 AM
+-- Generation Time: Mar 18, 2024 at 12:05 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -37,13 +37,6 @@ CREATE TABLE `profile` (
   `middle_name` varchar(50) NOT NULL,
   `last_name` varchar(60) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `profile`
---
-
-INSERT INTO `profile` (`profile_id`, `user_id`, `first_name`, `middle_name`, `last_name`) VALUES
-(2, 12, 'oli', 'test', 'leone');
 
 -- --------------------------------------------------------
 
@@ -94,7 +87,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`user_id`, `username`, `password_hash`, `active`) VALUES
-(12, 'Olivier', '$2y$10$NPol3/uNyIv7ymO9D0eYfu.BDWnKl/AIZ.6ve37Y7U2RZq7M.glji', 1);
+(1, 'amer', '$2y$10$ey5/oE/u3dgKH6O9bNlXm.kfT91BBHqhBqM4GZcFlIrEFXOU2wOB.', 0);
 
 --
 -- Indexes for dumped tables
@@ -105,7 +98,7 @@ INSERT INTO `user` (`user_id`, `username`, `password_hash`, `active`) VALUES
 --
 ALTER TABLE `profile`
   ADD PRIMARY KEY (`profile_id`),
-  ADD KEY `user_id` (`user_id`) USING BTREE;
+  ADD KEY `userId_foreignKey` (`user_id`);
 
 --
 -- Indexes for table `publication`
@@ -119,8 +112,8 @@ ALTER TABLE `publication`
 --
 ALTER TABLE `publication_comment`
   ADD PRIMARY KEY (`publication_comment_id`),
-  ADD KEY `publicationId_foreignKey` (`publication_id`),
-  ADD KEY `profileId_foreignKey2` (`profile_id`);
+  ADD KEY `profileId_foreignKey2` (`profile_id`),
+  ADD KEY `publicationId_foreignKey` (`publication_id`);
 
 --
 -- Indexes for table `user`
@@ -137,7 +130,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `profile`
 --
 ALTER TABLE `profile`
-  MODIFY `profile_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `profile_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `publication`
@@ -155,7 +148,7 @@ ALTER TABLE `publication_comment`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -165,20 +158,20 @@ ALTER TABLE `user`
 -- Constraints for table `profile`
 --
 ALTER TABLE `profile`
-  ADD CONSTRAINT `profile_to_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
+  ADD CONSTRAINT `userId_foreignKey` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
 
 --
 -- Constraints for table `publication`
 --
 ALTER TABLE `publication`
-  ADD CONSTRAINT `profileId_foreignKey` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `profileId_foreignKey` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`);
 
 --
 -- Constraints for table `publication_comment`
 --
 ALTER TABLE `publication_comment`
-  ADD CONSTRAINT `profileId_foreignKey2` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `publicationId_foreignKey` FOREIGN KEY (`publication_id`) REFERENCES `publication` (`publication_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `profileId_foreignKey2` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`),
+  ADD CONSTRAINT `publicationId_foreignKey` FOREIGN KEY (`publication_id`) REFERENCES `publication` (`publication_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

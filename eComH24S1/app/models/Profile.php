@@ -15,11 +15,9 @@ class Profile extends \app\core\Model{
 
 	//create
 	public function insert(){
-<<<<<<< HEAD
-		$SQL = 'INSERT INTO profile(user_id,first_name,middle_name,last_name) VALUE (:user_id,:first_name,:middle_name,:last_name,)';
-=======
+
 		$SQL = 'INSERT INTO profile(user_id,first_name,middle_name,last_name) VALUE (:user_id,:first_name,:middle_name,:last_name)';
->>>>>>> 7f1a8b294ccabe21166383a66a139377a12faf44
+		 
 		$STMT = self::$_conn->prepare($SQL);
 		$STMT->execute(
 			['user_id'=>$this->user_id,
