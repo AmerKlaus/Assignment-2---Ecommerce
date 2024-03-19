@@ -16,21 +16,10 @@
     <div>
         <?php foreach ($publications as $publication): ?>
             <div>
-                <?php if (isset ($publication['publication_title'], $publication['publication_text'], $publication['timestamp'])): ?>
-                    <h2>
-                        <?php echo $publication['publication_title']; ?>
-                    </h2>
-                    <p>
-                        <?php echo $publication['publication_text']; ?>
-                    </p>
-                    <p>
-                        <?php echo $publication['timestamp']; ?>
-                    </p>
-
-                    <p>
-                        <a href="/Publications/edit/<?php echo $publication['publication_id']; ?>">Edit</a>
-                        <a href="/Publications/delete/<?php echo $publication['publication_id']; ?>">Delete</a>
-                    </p>
+                <?php if (isset ($publication['publication_title'])): ?>
+                    <h2><a href="/Publications/content/<?php echo $publication['publication_id']; ?>">
+                            <?php echo $publication['publication_title']; ?>
+                        </a></h2>
                 <?php endif; ?>
             </div>
         <?php endforeach; ?>

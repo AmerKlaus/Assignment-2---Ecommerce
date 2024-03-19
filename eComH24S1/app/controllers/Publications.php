@@ -9,16 +9,14 @@ class Publications extends Controller
     public function index()
     {
         $publicationModel = new \app\models\Publications();
-        $publicationsData = $publicationModel->getAllPublications();
+        $publicationsData = $publicationModel->getAllPublicationTitles();
 
         // Convert object to array
         $publications = [];
         foreach ($publicationsData as $publication) {
             $publications[] = [
-                "publication_id" => $publication->publication_id,
-                'publication_title' => $publication->publication_title,
-                'publication_text' => $publication->publication_text,
-                'timestamp' => $publication->timestamp,
+                "publication_id" => $publication['publication_id'],
+                'publication_title' => $publication['publication_title'],
                 // Add other fields as needed
             ];
         }
@@ -26,6 +24,7 @@ class Publications extends Controller
         // Load the view with publications data
         $this->view('Publications/publications', ['publications' => $publications]);
     }
+
 
     #[\app\filters\HasProfile]
     public function create()
@@ -60,6 +59,31 @@ class Publications extends Controller
             header('Location: /Publications/index');
             exit();
         }
+    }
+
+    // Inside your Publications controller (Publications.php)
+    public function content($id)
+    {
+        $publicationModel = new \app\models\Publications();
+        $publication = $publicationModel->getPublicationById($id);
+
+        if (!$publication) {
+            // Handle case when publication is not found
+            // Example: header('Location: /Error');
+            exit ("Publication not found.");
+        }
+
+        // Convert object to array
+        $publicationArray[] = [
+            "publication_id" => $publication['publication_id'],
+            'publication_title' => $publication['publication_title'],
+            'publication_text' => $publication['publication_text'],
+            'timestamp' => $publication['timestamp'],
+            // Add other fields as needed
+        ];
+
+        // Load the view with publication data
+        $this->view('Publications/view', ['publications' => $publicationArray]);
     }
 
     public function edit($id)

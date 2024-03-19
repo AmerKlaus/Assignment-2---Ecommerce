@@ -57,6 +57,15 @@ class Publications extends \app\core\Model
         }
     }
 
+    // Inside your Publications model (Publications.php)
+    public function getPublicationById($id)
+    {
+        $SQL = 'SELECT * FROM publication WHERE publication_id = :id';
+        $STMT = self::$_conn->prepare($SQL);
+        $STMT->execute(['id' => $id]);
+        return $STMT->fetch(PDO::FETCH_ASSOC);
+    }
+
 
     // Inside your Publications model (Publications.php)
     public function getPublicationByIdAndProfile($id, $profile_id)
@@ -74,6 +83,14 @@ class Publications extends \app\core\Model
         $SQL = 'DELETE FROM publication WHERE publication_id = :id';
         $STMT = self::$_conn->prepare($SQL);
         $STMT->execute(['id' => $id]);
+    }
+
+    public function getAllPublicationTitles()
+    {
+        $SQL = 'SELECT publication_id, publication_title FROM publication ORDER BY timestamp DESC';
+        $STMT = self::$_conn->prepare($SQL);
+        $STMT->execute();
+        return $STMT->fetchAll(PDO::FETCH_ASSOC);
     }
 
 }

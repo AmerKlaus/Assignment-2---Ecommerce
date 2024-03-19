@@ -16,3 +16,4 @@ $this->addRoute('Publications/store', 'Publications,store');
 $this->addRoute('Publications/edit/{id}', 'Publications,edit');
 $this->addRoute('Publications/update/{id}', 'Publications,update');
 $this->addRoute('Publications/delete/{id}', 'Publications,delete');
+$this->addRoute('Publications/content/{id}', 'Publications,content');
