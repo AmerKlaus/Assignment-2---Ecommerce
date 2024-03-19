@@ -40,5 +40,40 @@ class Publications extends \app\core\Model
         return $STMT->fetchAll();
     }
 
+    // Publications.php model
+
+    // Inside your Publications model (Publications.php)
+    public function updatePublication($id, $title, $content, $status)
+    {
+        // Check if title and content are not null before executing the query
+        if ($title !== null && $content !== null && $status !== null) {
+            $SQL = 'UPDATE publication SET publication_title = :title, publication_text = :content, publication_status = :status WHERE publication_id = :id';
+            $STMT = self::$_conn->prepare($SQL);
+            $STMT->execute(['id' => $id, 'title' => $title, 'content' => $content, 'status' => $status]);
+        } else {
+            // Handle the case when title or content is null
+            // For example, redirect to an error page or display a message
+            exit ("Title or content cannot be null.");
+        }
+    }
+
+
+    // Inside your Publications model (Publications.php)
+    public function getPublicationByIdAndProfile($id, $profile_id)
+    {
+        $SQL = 'SELECT * FROM publication WHERE publication_id = :id AND profile_id = :profile_id';
+        $STMT = self::$_conn->prepare($SQL);
+        $STMT->execute(['id' => $id, 'profile_id' => $profile_id]);
+        $STMT->setFetchMode(PDO::FETCH_CLASS, 'app\\models\\Publications');
+        return $STMT->fetch(); // Assuming you expect only one publication
+    }
+
+    // Inside your Publications model (Publications.php)
+    public function deletePublication($id)
+    {
+        $SQL = 'DELETE FROM publication WHERE publication_id = :id';
+        $STMT = self::$_conn->prepare($SQL);
+        $STMT->execute(['id' => $id]);
+    }
 
 }
