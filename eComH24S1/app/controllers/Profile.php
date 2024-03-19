@@ -8,13 +8,20 @@ class Profile extends \app\core\Controller
 
 	#[\app\filters\HasProfile]
 	public function index()
-	{
-		$profile = new \app\models\Profile();
-		$profile = $profile->getForUser($_SESSION['user_id']);
+{
+    // Retrieve profile information for the logged-in user
+    $profileModel = new \app\models\Profile();
+    $profile = $profileModel->getForUser($_SESSION['user_id']);
 
-		//redirect a user that has no profile to the profile creation URL
-		$this->view('Profile/index', $profile);
-	}
+    // Retrieve publications associated with the user's profile ID
+    $publicationModel = new \app\models\Publications();
+    $publications = $publicationModel->getPublicationsByProfileId($profile->profile_id);
+
+    // Pass profile and publications data to the view
+    $this->view('Profile/index', ['profile' => $profile, 'publications' => $publications]);
+}
+
+
 
 	public function create()
 	{

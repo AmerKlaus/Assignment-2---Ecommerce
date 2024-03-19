@@ -92,5 +92,32 @@ class Publications extends \app\core\Model
         $STMT->execute();
         return $STMT->fetchAll(PDO::FETCH_ASSOC);
     }
+    // Inside your Publications model (Publications.php)
+public function getPublicationsByProfileId($profileId)
+{
+    $SQL = 'SELECT * FROM publication WHERE profile_id = :profile_id';
+    $STMT = self::$_conn->prepare($SQL);
+    $STMT->execute(['profile_id' => $profileId]);
+    return $STMT->fetchAll(PDO::FETCH_CLASS, 'app\\models\\Publications');
+}
+
+public function addComment($publicationId)
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Get the current user's profile ID
+        $profileModel = new \app\models\Profile();
+        $profile = $profileModel->getForUser($_SESSION['user_id']);
+        $profileId = $profile->profile_id;
+
+        // Insert the comment into the database
+        $commentModel = new \app\models\CommentModel();
+        $commentModel->addComment($profileId, $publicationId, $_POST['comment_text']);
+
+        // Redirect back to the publication view page
+        header('Location: /Publications/index/' . $publicationId);
+        exit();
+    }
+}
+
 
 }

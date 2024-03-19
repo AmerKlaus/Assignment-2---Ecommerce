@@ -10,7 +10,7 @@ class Publications extends Controller
     {
         $publicationModel = new \app\models\Publications();
         $publicationsData = $publicationModel->getAllPublicationTitles();
-
+    
         // Convert object to array
         $publications = [];
         foreach ($publicationsData as $publication) {
@@ -20,11 +20,12 @@ class Publications extends Controller
                 // Add other fields as needed
             ];
         }
-
-        // Load the view with publications data
-        $this->view('Publications/publications', ['publications' => $publications]);
+    
+        // Pass the comment model instance to the view
+        $commentModel = new \app\models\CommentModel();
+        $this->view('Publications/publications', ['publications' => $publications, 'commentModel' => $commentModel]);
     }
-
+    
 
     #[\app\filters\HasProfile]
     public function create()

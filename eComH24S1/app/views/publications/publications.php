@@ -16,10 +16,28 @@
     <div>
         <?php foreach ($publications as $publication): ?>
             <div>
-                <?php if (isset ($publication['publication_title'])): ?>
+                <?php if (isset($publication['publication_title'])): ?>
                     <h2><a href="/Publications/content/<?php echo $publication['publication_id']; ?>">
                             <?php echo $publication['publication_title']; ?>
                         </a></h2>
+                    <?php
+                    // Check if $commentModel is set before using it
+                    if (isset($commentModel)) {
+                        // Fetch and display comments associated with this publication
+                        $comments = $commentModel->getCommentsByPublicationId($publication['publication_id']);
+                        if (!empty($comments)) {
+                            echo "<ul>";
+                            foreach ($comments as $comment) {
+                                echo "<li><a href='/Comment/view/{$comment->publication_comment_id}'>View Comment</a></li>";
+                            }
+                            echo "</ul>";
+                        } else {
+                            echo "<p>No comments yet.</p>";
+                        }
+                    } else {
+                        echo "<p>Comments feature not available.</p>";
+                    }
+                    ?>
                 <?php endif; ?>
             </div>
         <?php endforeach; ?>
