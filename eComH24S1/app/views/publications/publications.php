@@ -1,4 +1,4 @@
-<!-- publications.php -->
+<!-- Inside publications.php -->
 <html>
 
 <head>
@@ -13,35 +13,42 @@
 <body>
     <h1>All Publications</h1>
 
+   
+<?php foreach ($publications as $publication): ?>
     <div>
-        <?php foreach ($publications as $publication): ?>
-            <div>
-                <?php if (isset($publication['publication_title'])): ?>
-                    <h2><a href="/Publications/content/<?php echo $publication['publication_id']; ?>">
-                            <?php echo $publication['publication_title']; ?>
-                        </a></h2>
-                    <?php
-                    // Check if $commentModel is set before using it
-                    if (isset($commentModel)) {
-                        // Fetch and display comments associated with this publication
-                        $comments = $commentModel->getCommentsByPublicationId($publication['publication_id']);
-                        if (!empty($comments)) {
-                            echo "<ul>";
-                            foreach ($comments as $comment) {
-                                echo "<li><a href='/Comment/view/{$comment->publication_comment_id}'>View Comment</a></li>";
-                            }
-                            echo "</ul>";
-                        } else {
-                            echo "<p>No comments yet.</p>";
-                        }
-                    } else {
-                        echo "<p>Comments feature not available.</p>";
-                    }
-                    ?>
+        <?php if (isset($publication['publication_title'])): ?>
+            <h2><a href="/Publications/content/<?php echo $publication['publication_id']; ?>">
+                <?php echo $publication['publication_title']; ?>
+            </a></h2>
+            <?php if (isset($publication['publication_text'])): ?>
+                <p><?php echo $publication['publication_text']; ?></p>
+            <?php endif; ?>
+
+            <!-- Add comment form -->
+            <form action="/Publications/addComment/<?php echo $publication['publication_id']; ?>" method="post">
+                <label for="comment_text">Add a Comment:</label><br>
+                <textarea id="comment_text" name="comment_text"></textarea><br>
+                <input type="submit" value="Submit">
+            </form>
+
+            <!-- Display comments associated with this publication -->
+            <?php if (isset($comment)): // Check for $comment instead of $commentModel ?>
+                <?php $comments = $comment->getCommentsByPublicationId($publication['publication_id']); ?>
+                <?php if (!empty($comments)): ?>
+                    <ul>
+                        <?php foreach ($comments as $comment): ?>
+                            <li><a href='/Comment/view/<?php echo $comment->publication_comment_id; ?>'>View Comment</a></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php else: ?>
+                    <p>No comments yet.</p>
                 <?php endif; ?>
-            </div>
-        <?php endforeach; ?>
+            <?php endif; ?>
+
+        <?php endif; ?>
     </div>
+<?php endforeach; ?>
+
 
     <a href="/Publications/create">POST</a>
 </body>

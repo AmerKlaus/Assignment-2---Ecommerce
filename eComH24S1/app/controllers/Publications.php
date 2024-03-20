@@ -6,26 +6,27 @@ use app\core\Controller;
 class Publications extends Controller
 {
 
-    public function index()
-    {
-        $publicationModel = new \app\models\Publications();
-        $publicationsData = $publicationModel->getAllPublicationTitles();
-    
-        // Convert object to array
-        $publications = [];
-        foreach ($publicationsData as $publication) {
-            $publications[] = [
-                "publication_id" => $publication['publication_id'],
-                'publication_title' => $publication['publication_title'],
-                // Add other fields as needed
-            ];
-        }
-    
-        // Pass the comment model instance to the view
-        $commentModel = new \app\models\CommentModel();
-        $this->view('Publications/publications', ['publications' => $publications, 'commentModel' => $commentModel]);
+  // Inside Publications controller (Publications.php)
+public function index()
+{
+    $publicationModel = new \app\models\Publications();
+    $publicationsData = $publicationModel->getAllPublicationTitles();
+
+    // Convert object to array
+    $publications = [];
+    foreach ($publicationsData as $publication) {
+        $publications[] = [
+            "publication_id" => $publication['publication_id'],
+            'publication_title' => $publication['publication_title'],
+            // Add other fields as needed
+        ];
     }
-    
+
+    // Pass the comment model instance to the view
+    $comment = new \app\models\Comment(); // Instantiate Comment model
+    $this->view('Publications/publications', ['publications' => $publications, 'commentModel' => $comment]); // Pass $comment instead of $commentModel
+}
+
 
     #[\app\filters\HasProfile]
     public function create()
@@ -173,6 +174,38 @@ class Publications extends Controller
         }
     }
 
+// Inside Publications controller (Publications.php)
+public function addComment($publication_id)
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Process form submission
+        $commentModel = new \app\models\Comment();
+
+        // Retrieve comment data from the form
+        $comment_text = $_POST['comment_text'];
+
+        // Insert the comment into the database
+        $commentModel->addComment($_SESSION['profile_id'], $publication_id, $comment_text);
+
+        // Redirect back to the publications index page
+        header('Location: /Publications/index');
+        exit();
+    }
+}
+
+
+// Inside Publications controller (Publications.php)
+public function viewComments($publication_id)
+{
+    // Create a new instance of the CommentModel
+    $comment = new \app\models\Comment();
+
+    // Call a method in CommentModel to retrieve comments for the specified publication
+    $comments = $comment->getCommentsByPublicationId($publication_id);
+
+    // Load a view to display the comments
+    $this->view('Publications/comments', ['comments' => $comments]);
+}
 
 }
 ?>
