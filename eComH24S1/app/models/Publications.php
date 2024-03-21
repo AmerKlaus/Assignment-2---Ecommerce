@@ -103,12 +103,14 @@ class Publications extends \app\core\Model
     }
 
     // Inside your Publications model (Publications.php)
-    public function searchPublications($query)
-    {
-        $SQL = "SELECT * FROM publication WHERE publication_title LIKE :query OR publication_text LIKE :query";
-        $STMT = self::$_conn->prepare($SQL);
-        $STMT->execute(['query' => "%$query%"]);
-        return $STMT->fetchAll(PDO::FETCH_ASSOC);
-    }
+    
+public function searchPublications($query)
+{
+    $SQL = "SELECT * FROM publication WHERE publication_status = 'public' AND (publication_title LIKE :query OR publication_text LIKE :query)";
+    $STMT = self::$_conn->prepare($SQL);
+    $STMT->execute(['query' => "%$query%"]);
+    return $STMT->fetchAll(PDO::FETCH_ASSOC);
+}
+
 
 }
