@@ -207,79 +207,94 @@ class Publications extends Controller
     // Inside Publications controller (Publications.php)public function view($id)
 
     #[\app\filters\HasProfile]
-    public function addComment($id)
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Method to handle adding a comment to a publication
+public function addComment($id)
+{
+    // Check if the request method is POST
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+        // Instantiate a new Comment model
+        $comment = new \app\models\Comment();
 
+        // Get the profile associated with the current user
+        $profile = new \app\models\Profile();
+        $profile = $profile->getForUser($_SESSION['user_id']);
 
-            $comment = new \app\models\Comment();
+        // Set the values for the comment
+        $comment->profile_id = $profile->profile_id;
+        $comment->publication_id = $id;
+        $comment->timestamp = date('Y-m-d H:i:s');
+        $comment->comment_text = $_POST['comment_text'];
 
-            // Set the values from the form
-            $profile = new \app\models\Profile();
-            $profile = $profile->getForUser($_SESSION['user_id']);
+        // Add the comment to the database
+        $comment->addComment();
 
-            $comment->profile_id = $profile->profile_id;
-            $comment->publication_id = $id;
-            $comment->timestamp = date('Y-m-d H:i:s');
-            $comment->comment_text = $_POST['comment_text'];
-
-
-            $comment->addComment();
-
-
-            header("Location: /Publications/content/$id");
-            exit();
-        }
+        // Redirect to the publication content page
+        header("Location: /Publications/content/$id");
+        exit();
     }
-
-    #[\app\filters\HasProfile]
-    public function editComment($id)
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $new_comment_text = isset ($_POST['new_comment_text']) ? $_POST['new_comment_text'] : null;
-
-            if ($new_comment_text) {
-                $commentModel = new \app\models\Comment();
-                $comment = $commentModel->getCommentById($id);
-
-                $user_id = $_SESSION['user_id'];
-                $profileModel = new \app\models\Profile();
-                $profile = $profileModel->getForUser($user_id);
-
-                if (!$comment || $comment->profile_id != $profile->profile_id) {
-                    exit ("Comment not found or you don't have permission to edit it.");
-                }
-
-                $commentModel->editComment($id, $new_comment_text);
-
-                header("Location: /Publications/content/{$comment->publication_id}");
-                exit();
-            } else {
-                exit ("Comment text cannot be empty.");
-            }
-        }
-    }
-
-    #[\app\filters\HasProfile]
-    public function deleteComment($id)
-    {
-        $commentModel = new \app\models\Comment();
-        $comment = $commentModel->getCommentById($id);
-
-        $user_id = $_SESSION['user_id'];
-        $profileModel = new \app\models\Profile();
-        $profile = $profileModel->getForUser($user_id);
-
-        if (!$comment || $comment->profile_id != $profile->profile_id) {
-            exit ("Comment not found or you don't have permission to delete it.");
-        }
-
-        $commentModel->deleteComment($id);
-
-        header("Location: /Publications/content/{$comment->publication_id}");
-    }
-
-
 }
+
+    #[\app\filters\HasProfile]
+   // Method to handle editing a comment
+public function editComment($id)
+{
+    // Check if the request method is POST
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Get the new comment text from the form
+        $new_comment_text = isset ($_POST['new_comment_text']) ? $_POST['new_comment_text'] : null;
+
+        // Check if the new comment text is not empty
+        if ($new_comment_text) {
+            // Instantiate a new Comment model
+            $commentModel = new \app\models\Comment();
+            $comment = $commentModel->getCommentById($id);
+
+            // Get the profile associated with the current user
+            $user_id = $_SESSION['user_id'];
+            $profileModel = new \app\models\Profile();
+            $profile = $profileModel->getForUser($user_id);
+
+            // Check if the comment exists and if the user has permission to edit it
+            if (!$comment || $comment->profile_id != $profile->profile_id) {
+                exit ("Comment not found or you don't have permission to edit it.");
+            }
+
+            // Update the comment with the new text
+            $commentModel->editComment($id, $new_comment_text);
+
+            // Redirect to the publication content page
+            header("Location: /Publications/content/{$comment->publication_id}");
+            exit();
+        } else {
+            exit ("Comment text cannot be empty.");
+        }
+    }
+}
+
+    #[\app\filters\HasProfile]
+    // Method to handle deleting a comment
+public function deleteComment($id)
+{
+    // Instantiate a new Comment model
+    $commentModel = new \app\models\Comment();
+    $comment = $commentModel->getCommentById($id);
+
+    // Get the profile associated with the current user
+    $user_id = $_SESSION['user_id'];
+    $profileModel = new \app\models\Profile();
+    $profile = $profileModel->getForUser($user_id);
+
+    // Check if the comment exists and if the user has permission to delete it
+    if (!$comment || $comment->profile_id != $profile->profile_id) {
+        exit ("Comment not found or you don't have permission to delete it.");
+    }
+
+    // Delete the comment from the database
+    $commentModel->deleteComment($id);
+
+    // Redirect to the publication content page
+    header("Location: /Publications/content/{$comment->publication_id}");
+}
+
 ?>
