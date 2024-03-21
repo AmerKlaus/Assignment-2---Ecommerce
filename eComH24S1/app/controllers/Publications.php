@@ -42,6 +42,7 @@ class Publications extends Controller
         $this->view('Publications/create');
     }
 
+    #[\app\filters\HasProfile]
     public function store()
     {
 
@@ -114,6 +115,7 @@ class Publications extends Controller
         $this->view('Publications/view', ['publications' => $publicationArray, 'comments' => $commentsArray]);
     }
 
+    #[\app\filters\HasProfile]
     public function edit($id)
     {
         // Get the publication from the database based on $publication_id
@@ -146,6 +148,7 @@ class Publications extends Controller
         }
     }
 
+    #[\app\filters\HasProfile]
     public function update($id)
     {
         // Get the updated data from the form
@@ -167,6 +170,7 @@ class Publications extends Controller
     }
 
     // Inside your Publications controller (Publications.php)
+    #[\app\filters\HasProfile]
     public function delete($id)
     {
         // Check if the publication exists and belongs to the current user
@@ -202,6 +206,7 @@ class Publications extends Controller
 
     // Inside Publications controller (Publications.php)public function view($id)
 
+    #[\app\filters\HasProfile]
     public function addComment($id)
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -228,6 +233,7 @@ class Publications extends Controller
         }
     }
 
+    #[\app\filters\HasProfile]
     public function editComment($id)
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -255,6 +261,7 @@ class Publications extends Controller
         }
     }
 
+    #[\app\filters\HasProfile]
     public function deleteComment($id)
     {
         $commentModel = new \app\models\Comment();
