@@ -7,26 +7,33 @@ class Publications extends Controller
 {
 
   // Inside Publications controller (Publications.php)
-public function index()
-{
-    $publicationModel = new \app\models\Publications();
-    $publicationsData = $publicationModel->getAllPublicationTitles();
-
-    // Convert object to array
-    $publications = [];
-    foreach ($publicationsData as $publication) {
-        $publications[] = [
-            "publication_id" => $publication['publication_id'],
-            'publication_title' => $publication['publication_title'],
-            // Add other fields as needed
-        ];
-    }
-
-    // Pass the comment model instance to the view
-    $comment = new \app\models\Comment(); // Instantiate Comment model
-    $this->view('Publications/publications', ['publications' => $publications, 'commentModel' => $comment]); // Pass $comment instead of $commentModel
-}
-
+  public function index()
+  {
+      $publicationModel = new \app\models\Publications();
+  
+      // Check if a search query is submitted
+      if (isset($_GET['q']) && !empty($_GET['q'])) {
+          // Retrieve publications based on search query
+          $publicationsData = $publicationModel->searchPublications($_GET['q']);
+      } else {
+          // Retrieve all publications
+          $publicationsData = $publicationModel->getAllPublicationTitles();
+      }
+  
+      // Convert object to array
+      $publications = [];
+      foreach ($publicationsData as $publication) {
+          $publications[] = [
+              "publication_id" => $publication['publication_id'],
+              'publication_title' => $publication['publication_title'],
+              // Add other fields as needed
+          ];
+      }
+  
+      // Pass the publications data to the view
+      $this->view('Publications/publications', ['publications' => $publications]);
+  }
+  
 
     #[\app\filters\HasProfile]
     public function create()
