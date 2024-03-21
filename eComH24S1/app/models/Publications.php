@@ -110,7 +110,7 @@ public function addComment($publicationId)
         $profileId = $profile->profile_id;
 
         // Insert the comment into the database
-        $commentModel = new \app\models\CommentModel();
+        $commentModel = new \app\models\Comment();
         $commentModel->addComment($profileId, $publicationId, $_POST['comment_text']);
 
         // Redirect back to the publication view page
