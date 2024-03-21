@@ -1,0 +1,103 @@
+/* styles.css */
+
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Form styles */
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Link styles */
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* New styles for publications.php */
+
+/* Publication styles */
+.publication-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.publication-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.publication-content {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.publication-timestamp {
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 10px;
+}
+
+.publication-actions {
+    margin-top: 10px;
+}
+
+.publication-actions a {
+    color: #007bff;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+.publication-actions a:hover {
+    text-decoration: underline;
+}
+
+/* Add padding to the "Post" button */
+.publication-actions a[href="/Publications/create"] {
+    padding-right: 10px; /* Adjust as needed */
+}
