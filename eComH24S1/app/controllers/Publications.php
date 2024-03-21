@@ -83,13 +83,9 @@ class Publications extends Controller
         }
 
         $commentModel = new \app\models\Comment();
-        $comment = $commentModel->getCommentsByPublicationId($id);
+        $comments = $commentModel->getCommentsByPublicationId($id);
 
-        var_dump($comment);
-
-        if (!$comment) {
-            // Handle case when publication is not found
-            // Example: header('Location: /Error');
+        if (!$comments) {
             echo "no comments found.";
         }
 
@@ -102,16 +98,17 @@ class Publications extends Controller
             // Add other fields as needed
         ];
 
-        $commentsArray[] = [
-            'publication_comment_id' => $comment['publication_comment_id'],
-            'profile_id' => $comment['profile_id'],
-            'publication_id' => $comment['publication_id'],
-            'timestamp' => $comment['timestamp'],
-            'comment_text' => $comment['comment_text'],
-            // Add other fields as needed
-        ];
-
-        var_dump($commentsArray);
+        $commentsArray = [];
+        foreach ($comments as $comment) {
+            $commentsArray[] = [
+                'publication_comment_id' => $comment->publication_comment_id,
+                'profile_id' => $comment->profile_id,
+                'publication_id' => $comment->publication_id,
+                'timestamp' => $comment->timestamp,
+                'comment_text' => $comment->comment_text,
+                // Add other fields as needed
+            ];
+        }
 
         // Load the view with publication data
         $this->view('Publications/view', ['publications' => $publicationArray, 'comments' => $commentsArray]);
@@ -231,28 +228,37 @@ class Publications extends Controller
         }
     }
 
-    public function editComment($publication_comment_id)
+    public function editComment($id)
     {
-        $commentModel = new \app\models\Comment();
-        $comment = $commentModel->getCommentById($publication_comment_id);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $new_comment_text = isset ($_POST['new_comment_text']) ? $_POST['new_comment_text'] : null;
 
-        $user_id = $_SESSION['user_id'];
-        $profileModel = new \app\models\Profile();
-        $profile = $profileModel->getForUser($user_id);
+            if ($new_comment_text) {
+                $commentModel = new \app\models\Comment();
+                $comment = $commentModel->getCommentById($id);
 
-        if (!$comment || $comment->profile_id != $profile->profile_id) {
-            exit ("Comment not found or you don't have permission to edit it.");
+                $user_id = $_SESSION['user_id'];
+                $profileModel = new \app\models\Profile();
+                $profile = $profileModel->getForUser($user_id);
+
+                if (!$comment || $comment->profile_id != $profile->profile_id) {
+                    exit ("Comment not found or you don't have permission to edit it.");
+                }
+
+                $commentModel->editComment($id, $new_comment_text);
+
+                header("Location: /Publications/content/{$comment->publication_id}");
+                exit();
+            } else {
+                exit ("Comment text cannot be empty.");
+            }
         }
-
-        $commentModel->editComment($publication_comment_id, $_POST['new_comment_text']);
-
-        header("Location: /Publications/content/{$comment->publication_id}");
     }
 
-    public function deleteComment($publication_comment_id)
+    public function deleteComment($id)
     {
         $commentModel = new \app\models\Comment();
-        $comment = $commentModel->getCommentById($publication_comment_id);
+        $comment = $commentModel->getCommentById($id);
 
         $user_id = $_SESSION['user_id'];
         $profileModel = new \app\models\Profile();
@@ -262,7 +268,7 @@ class Publications extends Controller
             exit ("Comment not found or you don't have permission to delete it.");
         }
 
-        $commentModel->deleteComment($publication_comment_id);
+        $commentModel->deleteComment($id);
 
         header("Location: /Publications/content/{$comment->publication_id}");
     }

@@ -49,9 +49,16 @@
                                     <p>
                                         <?php echo $comment['timestamp']; ?>
                                     </p>
-                                    <?php $profile = new \app\models\Profile();
-                                    if ($comment['profile_id'] == $profile->getForUser($_SESSION['user_id'])): ?>
-                                        <a href="/Publications/editComment/<?php echo $comment['publication_comment_id']; ?>">Edit</a>
+                                    <?php
+                                    $profile = new \app\models\Profile();
+                                    $commentProfile = $profile->getForUser($_SESSION['user_id']);
+                                    if ($comment['profile_id'] == $commentProfile->profile_id): ?>
+                                        <form action="/Publications/editComment/<?php echo $comment['publication_comment_id']; ?>"
+                                            method="POST">
+                                            <textarea name="new_comment_text" rows="4" cols="50"
+                                                required><?php echo $comment['comment_text']; ?></textarea><br><br>
+                                            <input type="submit" value="Save Changes">
+                                        </form>
                                         <a href="/Publications/deleteComment/<?php echo $comment['publication_comment_id']; ?>">Delete</a>
                                     <?php endif; ?>
                                 </div>
