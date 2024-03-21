@@ -6,34 +6,34 @@ use app\core\Controller;
 class Publications extends Controller
 {
 
-  // Inside Publications controller (Publications.php)
-  public function index()
-  {
-      $publicationModel = new \app\models\Publications();
-  
-      // Check if a search query is submitted
-      if (isset($_GET['q']) && !empty($_GET['q'])) {
-          // Retrieve publications based on search query
-          $publicationsData = $publicationModel->searchPublications($_GET['q']);
-      } else {
-          // Retrieve all publications
-          $publicationsData = $publicationModel->getAllPublicationTitles();
-      }
-  
-      // Convert object to array
-      $publications = [];
-      foreach ($publicationsData as $publication) {
-          $publications[] = [
-              "publication_id" => $publication['publication_id'],
-              'publication_title' => $publication['publication_title'],
-              // Add other fields as needed
-          ];
-      }
-  
-      // Pass the publications data to the view
-      $this->view('Publications/publications', ['publications' => $publications]);
-  }
-  
+    // Inside Publications controller (Publications.php)
+    public function index()
+    {
+        $publicationModel = new \app\models\Publications();
+
+        // Check if a search query is submitted
+        if (isset ($_GET['q']) && !empty ($_GET['q'])) {
+            // Retrieve publications based on search query
+            $publicationsData = $publicationModel->searchPublications($_GET['q']);
+        } else {
+            // Retrieve all publications
+            $publicationsData = $publicationModel->getAllPublicationTitles();
+        }
+
+        // Convert object to array
+        $publications = [];
+        foreach ($publicationsData as $publication) {
+            $publications[] = [
+                "publication_id" => $publication['publication_id'],
+                'publication_title' => $publication['publication_title'],
+                // Add other fields as needed
+            ];
+        }
+
+        // Pass the publications data to the view
+        $this->view('Publications/publications', ['publications' => $publications]);
+    }
+
 
     #[\app\filters\HasProfile]
     public function create()
@@ -82,17 +82,39 @@ class Publications extends Controller
             exit ("Publication not found.");
         }
 
+        $commentModel = new \app\models\Comment();
+        $comment = $commentModel->getCommentsByPublicationId($id);
+
+        var_dump($comment);
+
+        if (!$comment) {
+            // Handle case when publication is not found
+            // Example: header('Location: /Error');
+            echo "no comments found.";
+        }
+
         // Convert object to array
         $publicationArray[] = [
-            "publication_id" => $publication['publication_id'],
+            'publication_id' => $publication['publication_id'],
             'publication_title' => $publication['publication_title'],
             'publication_text' => $publication['publication_text'],
             'timestamp' => $publication['timestamp'],
             // Add other fields as needed
         ];
 
+        $commentsArray[] = [
+            'publication_comment_id' => $comment['publication_comment_id'],
+            'profile_id' => $comment['profile_id'],
+            'publication_id' => $comment['publication_id'],
+            'timestamp' => $comment['timestamp'],
+            'comment_text' => $comment['comment_text'],
+            // Add other fields as needed
+        ];
+
+        var_dump($commentsArray);
+
         // Load the view with publication data
-        $this->view('Publications/view', ['publications' => $publicationArray]);
+        $this->view('Publications/view', ['publications' => $publicationArray, 'comments' => $commentsArray]);
     }
 
     public function edit($id)
@@ -181,38 +203,70 @@ class Publications extends Controller
         }
     }
 
-// Inside Publications controller (Publications.php)
-public function addComment($publication_id)
-{
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Process form submission
-        $commentModel = new \app\models\Comment();
+    // Inside Publications controller (Publications.php)public function view($id)
 
-        // Retrieve comment data from the form
-        $comment_text = $_POST['comment_text'];
+    public function addComment($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        // Insert the comment into the database
-        $commentModel->addComment($_SESSION['profile_id'], $publication_id, $comment_text);
 
-        // Redirect back to the publications index page
-        header('Location: /Publications/index');
-        exit();
+
+            $comment = new \app\models\Comment();
+
+            // Set the values from the form
+            $profile = new \app\models\Profile();
+            $profile = $profile->getForUser($_SESSION['user_id']);
+
+            $comment->profile_id = $profile->profile_id;
+            $comment->publication_id = $id;
+            $comment->timestamp = date('Y-m-d H:i:s');
+            $comment->comment_text = $_POST['comment_text'];
+
+
+            $comment->addComment();
+
+
+            header("Location: /Publications/content/$id");
+            exit();
+        }
     }
-}
 
+    public function editComment($publication_comment_id)
+    {
+        $commentModel = new \app\models\Comment();
+        $comment = $commentModel->getCommentById($publication_comment_id);
 
-// Inside Publications controller (Publications.php)
-public function viewComments($publication_id)
-{
-    // Create a new instance of the CommentModel
-    $comment = new \app\models\Comment();
+        $user_id = $_SESSION['user_id'];
+        $profileModel = new \app\models\Profile();
+        $profile = $profileModel->getForUser($user_id);
 
-    // Call a method in CommentModel to retrieve comments for the specified publication
-    $comments = $comment->getCommentsByPublicationId($publication_id);
+        if (!$comment || $comment->profile_id != $profile->profile_id) {
+            exit ("Comment not found or you don't have permission to edit it.");
+        }
 
-    // Load a view to display the comments
-    $this->view('Publications/comments', ['comments' => $comments]);
-}
+        $commentModel->editComment($publication_comment_id, $_POST['new_comment_text']);
+
+        header("Location: /Publications/content/{$comment->publication_id}");
+    }
+
+    public function deleteComment($publication_comment_id)
+    {
+        $commentModel = new \app\models\Comment();
+        $comment = $commentModel->getCommentById($publication_comment_id);
+
+        $user_id = $_SESSION['user_id'];
+        $profileModel = new \app\models\Profile();
+        $profile = $profileModel->getForUser($user_id);
+
+        if (!$comment || $comment->profile_id != $profile->profile_id) {
+            exit ("Comment not found or you don't have permission to delete it.");
+        }
+
+        $commentModel->deleteComment($publication_comment_id);
+
+        header("Location: /Publications/content/{$comment->publication_id}");
+    }
+
 
 }
 ?>

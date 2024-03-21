@@ -32,15 +32,43 @@
                             </p>
 
                             <p>
-                                <a class="btn btn-primary" href="/Publications/edit/<?php echo $publication['publication_id']; ?>">Edit</a>
-                                <a class="btn btn-danger" href="/Publications/delete/<?php echo $publication['publication_id']; ?>">Delete</a>
+                                <a class="btn btn-primary"
+                                    href="/Publications/edit/<?php echo $publication['publication_id']; ?>">Edit</a>
+                                <a class="btn btn-danger"
+                                    href="/Publications/delete/<?php echo $publication['publication_id']; ?>">Delete</a>
                             </p>
                         <?php endif; ?>
+
+                        <h2>Comments</h2>
+                        <?php if (!empty ($comments)): ?>
+                            <?php foreach ($comments as $comment): ?>
+                                <div>
+                                    <p>
+                                        <?php echo $comment['comment_text']; ?>
+                                    </p>
+                                    <p>
+                                        <?php echo $comment['timestamp']; ?>
+                                    </p>
+                                    <?php $profile = new \app\models\Profile();
+                                    if ($comment['profile_id'] == $profile->getForUser($_SESSION['user_id'])): ?>
+                                        <a href="/Publications/editComment/<?php echo $comment['publication_comment_id']; ?>">Edit</a>
+                                        <a href="/Publications/deleteComment/<?php echo $comment['publication_comment_id']; ?>">Delete</a>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+
+                        <h2>Add Comment</h2>
+                        <form action='/Publications/addComment/<?php echo $publication['publication_id']; ?>' method="POST">
+                            <textarea name="comment_text" id="comment_text" rows="4" cols="50" required></textarea><br><br>
+                            <input type="submit" value="Add Comment">
+                        </form>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
                 <p>No publications found.</p>
             <?php endif; ?>
+
         </div>
 
         <a href="/Publications/index">Back To Main</a>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 18, 2024 at 03:45 AM
+-- Generation Time: Mar 21, 2024 at 02:37 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -43,7 +43,9 @@ CREATE TABLE `profile` (
 --
 
 INSERT INTO `profile` (`profile_id`, `user_id`, `first_name`, `middle_name`, `last_name`) VALUES
-(2, 12, 'oli', 'test', 'leone');
+(2, 12, 'oli', 'test', 'leone'),
+(3, 13, 'aa', 'gg', 'jj'),
+(4, 14, 'test', 'test', 'test');
 
 -- --------------------------------------------------------
 
@@ -61,6 +63,15 @@ CREATE TABLE `publication` (
   `publication_status` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `publication`
+--
+
+INSERT INTO `publication` (`publication_id`, `profile_id`, `publication_title`, `publication_text`, `timestamp`, `publication_status`) VALUES
+(1, 3, 'test', 'yoyoyoyo', '2024-03-21 00:46:02', 'private'),
+(2, 3, 'test', 'testsetsetsetset', '2024-03-21 00:47:34', 'private'),
+(3, 3, 'comment tester', 'yoooooyoyoyoyooyoyoyooy test', '2024-03-21 02:06:19', 'public');
+
 -- --------------------------------------------------------
 
 --
@@ -72,7 +83,8 @@ CREATE TABLE `publication_comment` (
   `publication_comment_id` int(11) NOT NULL,
   `profile_id` int(11) NOT NULL,
   `publication_id` int(11) NOT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `comment_text` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -94,7 +106,9 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`user_id`, `username`, `password_hash`, `active`) VALUES
-(12, 'Olivier', '$2y$10$NPol3/uNyIv7ymO9D0eYfu.BDWnKl/AIZ.6ve37Y7U2RZq7M.glji', 1);
+(12, 'Olivier', '$2y$10$NPol3/uNyIv7ymO9D0eYfu.BDWnKl/AIZ.6ve37Y7U2RZq7M.glji', 1),
+(13, 'amer', '$2y$10$2LrbFMSGfQuLPgXaDvFhYOEoY00nplU5rRQE8eF/ll9BbLwz3g61i', 1),
+(14, 'test', '$2y$10$9fJizEkdKJORiXHEl9Yd/Ow.oVtRuM.OWjYtNhSQcMVhllk1LGaIy', 1);
 
 --
 -- Indexes for dumped tables
@@ -137,13 +151,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `profile`
 --
 ALTER TABLE `profile`
-  MODIFY `profile_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `profile_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `publication`
 --
 ALTER TABLE `publication`
-  MODIFY `publication_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `publication_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `publication_comment`
@@ -155,7 +169,7 @@ ALTER TABLE `publication_comment`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- Constraints for dumped tables
